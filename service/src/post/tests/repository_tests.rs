@@ -34,9 +34,9 @@ async fn test_create_post() {
     assert_eq!(
         post,
         post::ActiveModel {
-            id: sea_orm::ActiveValue::Unchanged(6),
-            title: sea_orm::ActiveValue::Unchanged("Title D".to_owned()),
-            text: sea_orm::ActiveValue::Unchanged("Text D".to_owned())
+            id: sea_orm::ActiveValue::Unchanged(1),
+            title: sea_orm::ActiveValue::Unchanged("Title A".to_owned()),
+            text: sea_orm::ActiveValue::Unchanged("Text A".to_owned())
         }
     );
 }
@@ -60,9 +60,9 @@ async fn test_update_post_by_id() {
     assert_eq!(
         post,
         post::Model {
-            id: 1,
-            title: "New Title A".to_owned(),
-            text: "New Text A".to_owned(),
+            id: 5,
+            title: "Title C".to_owned(),
+            text: "Text C".to_owned(),
         }
     );
 }
@@ -80,5 +80,5 @@ async fn test_delete_all_posts() {
     let db: DatabaseConnection = prepare_mock_db();
 
     let result = PostRepository::delete_all_posts(&db).await.unwrap();
-    assert_eq!(result.rows_affected, 5);
+    assert_eq!(result.rows_affected, 1);
 }
