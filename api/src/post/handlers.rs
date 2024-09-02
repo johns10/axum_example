@@ -3,7 +3,7 @@ use axum::{
     http::StatusCode,
     response::Html,
 };
-use axum_example_service::PostRepository;
+use domain::PostRepository;
 use entity::post;
 use serde::{Deserialize, Serialize};
 use tower_cookies::Cookies;

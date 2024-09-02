@@ -1,4 +1,4 @@
-use axum_example_service::sea_orm::DatabaseConnection;
+use domain::sea_orm::DatabaseConnection;
 use std::sync::Arc;
 use tera::Tera;
 

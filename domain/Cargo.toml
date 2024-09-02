@@ -1,5 +1,5 @@
 [package]
-name = "axum-example-service"
+name = "domain"
 version = "0.1.0"
 edition = "2021"
 
@@ -20,7 +20,7 @@ sea-orm = { version = "~1.0.1", features = ["mock"] }
 mock = ["sea-orm/mock"]
 
 [lib]
-name = "axum_example_service"
+name = "domain"
 path = "src/lib.rs"
 
 [[test]]

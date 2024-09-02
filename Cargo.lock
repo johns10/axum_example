@@ -407,7 +407,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "axum",
- "axum-example-service",
+ "domain",
  "dotenvy",
  "entity",
  "migration",
@@ -419,15 +419,6 @@ dependencies = [
  "tower-cookies",
  "tower-http",
  "tracing-subscriber",
-]
-
-[[package]]
-name = "axum-example-service"
-version = "0.1.0"
-dependencies = [
- "entity",
- "sea-orm",
- "tokio",
 ]
 
 [[package]]
@@ -840,6 +831,15 @@ dependencies = [
  "const-oid",
  "crypto-common",
  "subtle",
+]
+
+[[package]]
+name = "domain"
+version = "0.1.0"
+dependencies = [
+ "entity",
+ "sea-orm",
+ "tokio",
 ]
 
 [[package]]

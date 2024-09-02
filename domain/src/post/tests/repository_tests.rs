@@ -1,4 +1,4 @@
-use axum_example_service::post::repository::PostRepository;
+use domain::post::repository::PostRepository;
 use entity::post;
 use sea_orm::DatabaseConnection;
 
