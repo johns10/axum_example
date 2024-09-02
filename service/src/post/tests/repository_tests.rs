@@ -1,26 +1,27 @@
-use crate::post::repository::PostRepository;
+use axum_example_service::post::repository::PostRepository;
 use entity::post;
 use sea_orm::DatabaseConnection;
 
-use super::db_mocks::prepare_mock_db;
+mod db_mocks;
+use db_mocks::prepare_mock_db;
 
 #[tokio::test]
 async fn test_find_post_by_id() {
-    let db: &DatabaseConnection = &prepare_mock_db();
+    let db: DatabaseConnection = prepare_mock_db();
 
-    let post = PostRepository::find_post_by_id(db, 1).await.unwrap().unwrap();
+    let post = PostRepository::find_post_by_id(&db, 1).await.unwrap().unwrap();
     assert_eq!(post.id, 1);
 
-    let post = PostRepository::find_post_by_id(db, 5).await.unwrap().unwrap();
+    let post = PostRepository::find_post_by_id(&db, 5).await.unwrap().unwrap();
     assert_eq!(post.id, 5);
 }
 
 #[tokio::test]
 async fn test_create_post() {
-    let db: &DatabaseConnection = &prepare_mock_db();
+    let db: DatabaseConnection = prepare_mock_db();
 
     let post = PostRepository::create_post(
-        db,
+        &db,
         post::Model {
             id: 0,
             title: "Title D".to_owned(),
@@ -42,10 +43,10 @@ async fn test_create_post() {
 
 #[tokio::test]
 async fn test_update_post_by_id() {
-    let db: &DatabaseConnection = &prepare_mock_db();
+    let db: DatabaseConnection = prepare_mock_db();
 
     let post = PostRepository::update_post_by_id(
-        db,
+        &db,
         1,
         post::Model {
             id: 1,
@@ -68,16 +69,16 @@ async fn test_update_post_by_id() {
 
 #[tokio::test]
 async fn test_delete_post() {
-    let db: &DatabaseConnection = &prepare_mock_db();
+    let db: DatabaseConnection = prepare_mock_db();
 
-    let result = PostRepository::delete_post(db, 5).await.unwrap();
+    let result = PostRepository::delete_post(&db, 5).await.unwrap();
     assert_eq!(result.rows_affected, 1);
 }
 
 #[tokio::test]
 async fn test_delete_all_posts() {
-    let db: &DatabaseConnection = &prepare_mock_db();
+    let db: DatabaseConnection = prepare_mock_db();
 
-    let result = PostRepository::delete_all_posts(db).await.unwrap();
+    let result = PostRepository::delete_all_posts(&db).await.unwrap();
     assert_eq!(result.rows_affected, 5);
 }
