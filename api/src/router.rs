@@ -1,18 +1,12 @@
-use axum::{
-    routing::{get, get_service, post},
-    Router,
-};
+use axum::{routing::get_service, Router};
 use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
 
-use crate::{post::handlers, AppState};
+use crate::{post::router::create_post_router, AppState};
 
 pub fn create_router(state: AppState) -> Router {
     Router::new()
-        .route("/", get(handlers::list_posts).post(handlers::create_post))
-        .route("/:id", get(handlers::edit_post).post(handlers::update_post))
-        .route("/new", get(handlers::new_post))
-        .route("/delete/:id", post(handlers::delete_post))
+        .nest("/posts", create_post_router())
         .nest_service(
             "/static",
             get_service(ServeDir::new(concat!(
