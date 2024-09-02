@@ -77,6 +77,7 @@ impl Clone for AppState {
     fn clone(&self) -> Self {
         Self {
             conn: self.conn.clone(),
+            templates: self.templates.clone(),
         }
     }
 }
