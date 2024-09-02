@@ -1,6 +1,6 @@
 pub mod post {
-    pub mod repository;
+    pub mod service;
 }
 
-pub use post::repository::PostRepository;
+pub use post::service::PostService;
 pub use sea_orm;

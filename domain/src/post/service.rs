@@ -1,9 +1,9 @@
 use ::entity::{post, post::Entity as Post};
 use sea_orm::*;
 
-pub struct PostRepository;
+pub struct PostService;
 
-impl PostRepository {
+impl PostService {
     pub async fn find_post_by_id(db: &DbConn, id: i32) -> Result<Option<post::Model>, DbErr> {
         Post::find_by_id(id).one(db).await
     }

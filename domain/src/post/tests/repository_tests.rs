@@ -1,4 +1,4 @@
-use domain::post::repository::PostRepository;
+use domain::post::repository::PostService;
 use entity::post;
 use sea_orm::DatabaseConnection;
 
@@ -9,10 +9,10 @@ use db_mocks::prepare_mock_db;
 async fn test_find_post_by_id() {
     let db: DatabaseConnection = prepare_mock_db();
 
-    let post = PostRepository::find_post_by_id(&db, 1).await.unwrap().unwrap();
+    let post = PostService::find_post_by_id(&db, 1).await.unwrap().unwrap();
     assert_eq!(post.id, 1);
 
-    let post = PostRepository::find_post_by_id(&db, 5).await.unwrap().unwrap();
+    let post = PostService::find_post_by_id(&db, 5).await.unwrap().unwrap();
     assert_eq!(post.id, 5);
 }
 
@@ -20,7 +20,7 @@ async fn test_find_post_by_id() {
 async fn test_create_post() {
     let db: DatabaseConnection = prepare_mock_db();
 
-    let post = PostRepository::create_post(
+    let post = PostService::create_post(
         &db,
         post::Model {
             id: 0,
@@ -45,7 +45,7 @@ async fn test_create_post() {
 async fn test_update_post_by_id() {
     let db: DatabaseConnection = prepare_mock_db();
 
-    let post = PostRepository::update_post_by_id(
+    let post = PostService::update_post_by_id(
         &db,
         1,
         post::Model {
@@ -71,7 +71,7 @@ async fn test_update_post_by_id() {
 async fn test_delete_post() {
     let db: DatabaseConnection = prepare_mock_db();
 
-    let result = PostRepository::delete_post(&db, 5).await.unwrap();
+    let result = PostService::delete_post(&db, 5).await.unwrap();
     assert_eq!(result.rows_affected, 1);
 }
 
@@ -79,6 +79,6 @@ async fn test_delete_post() {
 async fn test_delete_all_posts() {
     let db: DatabaseConnection = prepare_mock_db();
 
-    let result = PostRepository::delete_all_posts(&db).await.unwrap();
+    let result = PostService::delete_all_posts(&db).await.unwrap();
     assert_eq!(result.rows_affected, 1);
 }
