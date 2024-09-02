@@ -5,12 +5,10 @@ use axum::{
     routing::{get, get_service, post},
     Router,
 };
-use axum_example_service::{
-    sea_orm::{Database, DatabaseConnection},
-};
-use std::sync::Arc;
+use axum_example_service::sea_orm::{Database, DatabaseConnection};
 use migration::{Migrator, MigratorTrait};
 use std::env;
+use std::sync::Arc;
 use tera::Tera;
 use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
