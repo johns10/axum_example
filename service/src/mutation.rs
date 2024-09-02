@@ -1,5 +1,6 @@
-use ::entity::{post, post::Entity as Post};
+use ::entity::post;
 use sea_orm::*;
+use crate::post::repository::PostRepository;
 
 pub struct Mutation;
 
@@ -8,13 +9,7 @@ impl Mutation {
         db: &DbConn,
         form_data: post::Model,
     ) -> Result<post::ActiveModel, DbErr> {
-        post::ActiveModel {
-            title: Set(form_data.title.to_owned()),
-            text: Set(form_data.text.to_owned()),
-            ..Default::default()
-        }
-        .save(db)
-        .await
+        PostRepository::create_post(db, form_data).await
     }
 
     pub async fn update_post_by_id(
@@ -22,32 +17,14 @@ impl Mutation {
         id: i32,
         form_data: post::Model,
     ) -> Result<post::Model, DbErr> {
-        let post: post::ActiveModel = Post::find_by_id(id)
-            .one(db)
-            .await?
-            .ok_or(DbErr::Custom("Cannot find post.".to_owned()))
-            .map(Into::into)?;
-
-        post::ActiveModel {
-            id: post.id,
-            title: Set(form_data.title.to_owned()),
-            text: Set(form_data.text.to_owned()),
-        }
-        .update(db)
-        .await
+        PostRepository::update_post_by_id(db, id, form_data).await
     }
 
     pub async fn delete_post(db: &DbConn, id: i32) -> Result<DeleteResult, DbErr> {
-        let post: post::ActiveModel = Post::find_by_id(id)
-            .one(db)
-            .await?
-            .ok_or(DbErr::Custom("Cannot find post.".to_owned()))
-            .map(Into::into)?;
-
-        post.delete(db).await
+        PostRepository::delete_post(db, id).await
     }
 
     pub async fn delete_all_posts(db: &DbConn) -> Result<DeleteResult, DbErr> {
-        Post::delete_many().exec(db).await
+        PostRepository::delete_all_posts(db).await
     }
 }

@@ -1,11 +1,12 @@
-use ::entity::{post, post::Entity as Post};
+use ::entity::post;
 use sea_orm::*;
+use crate::post::repository::PostRepository;
 
 pub struct Query;
 
 impl Query {
     pub async fn find_post_by_id(db: &DbConn, id: i32) -> Result<Option<post::Model>, DbErr> {
-        Post::find_by_id(id).one(db).await
+        PostRepository::find_post_by_id(db, id).await
     }
 
     /// If ok, returns (post models, num pages).
@@ -14,13 +15,6 @@ impl Query {
         page: u64,
         posts_per_page: u64,
     ) -> Result<(Vec<post::Model>, u64), DbErr> {
-        // Setup paginator
-        let paginator = Post::find()
-            .order_by_asc(post::Column::Id)
-            .paginate(db, posts_per_page);
-        let num_pages = paginator.num_pages().await?;
-
-        // Fetch paginated posts
-        paginator.fetch_page(page - 1).await.map(|p| (p, num_pages))
+        PostRepository::find_posts_in_page(db, page, posts_per_page).await
     }
 }
