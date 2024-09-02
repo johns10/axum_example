@@ -68,10 +68,17 @@ async fn start() -> anyhow::Result<()> {
     Ok(())
 }
 
-#[derive(Clone)]
-struct AppState {
-    templates: Tera,
+pub struct AppState {
     conn: DatabaseConnection,
+    templates: Tera,
+}
+
+impl Clone for AppState {
+    fn clone(&self) -> Self {
+        Self {
+            conn: self.conn.clone(),
+        }
+    }
 }
 
 #[derive(Deserialize)]
