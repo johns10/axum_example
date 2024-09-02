@@ -49,7 +49,7 @@ pub async fn list_posts(
 
     let body = state
         .templates
-        .render("index.html.tera", &ctx)
+        .render("post/templates/index.html.tera", &ctx)
         .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
 
     Ok(Html(body))
@@ -59,7 +59,7 @@ pub async fn new_post(state: State<AppState>) -> Result<Html<String>, (StatusCod
     let ctx = tera::Context::new();
     let body = state
         .templates
-        .render("new.html.tera", &ctx)
+        .render("post/templates/new.html.tera", &ctx)
         .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
 
     Ok(Html(body))
@@ -98,7 +98,7 @@ pub async fn edit_post(
 
     let body = state
         .templates
-        .render("edit.html.tera", &ctx)
+        .render("post/templates/edit.html.tera", &ctx)
         .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
 
     Ok(Html(body))

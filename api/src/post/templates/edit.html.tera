@@ -14,15 +14,12 @@
             autofocus
             class="u-full-width"
           />
-          <input
-            type="text"
+          <textarea
             placeholder="content"
             name="text"
             id="text"
-            value="{{ post.text }}"
-            autofocus
             class="u-full-width"
-          />
+          >{{ post.text }}</textarea>
         </div>
         <div class="twelve columns">
           <div class="two columns">
