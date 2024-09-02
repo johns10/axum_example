@@ -10,13 +10,7 @@ entity = { path = "../entity" }
 
 [dependencies.sea-orm]
 version = "~1.0.1" # sea-orm version
-features = [
-    "debug-print",
-    "runtime-tokio-native-tls",
-    "sqlx-postgres",
-    # "sqlx-mysql",
-    # "sqlx-sqlite",
-]
+features = ["debug-print", "runtime-tokio-native-tls", "sqlx-postgres"]
 
 [dev-dependencies]
 tokio = { version = "1.34.0", features = ["macros", "rt"] }
@@ -24,3 +18,7 @@ sea-orm = { version = "~1.0.1", features = ["mock"] }
 
 [features]
 mock = ["sea-orm/mock"]
+
+[lib]
+name = "axum_example_service"
+path = "src/lib.rs"
