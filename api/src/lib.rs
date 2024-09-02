@@ -9,7 +9,7 @@ use axum::{
 };
 use axum_example_service::{
     sea_orm::{Database, DatabaseConnection},
-    Mutation as MutationCore, Query as QueryCore,
+    PostRepository,
 };
 use entity::post;
 use flash::{get_flash_cookie, post_response, PostResponse};
@@ -94,7 +94,7 @@ async fn list_posts(
     let page = params.page.unwrap_or(1);
     let posts_per_page = params.posts_per_page.unwrap_or(5);
 
-    let (posts, num_pages) = QueryCore::find_posts_in_page(&state.conn, page, posts_per_page)
+    let (posts, num_pages) = PostRepository::find_posts_in_page(&state.conn, page, posts_per_page)
         .await
         .expect("Cannot find posts in page");
 
@@ -133,7 +133,7 @@ async fn create_post(
 ) -> Result<PostResponse, (StatusCode, &'static str)> {
     let form = form.0;
 
-    MutationCore::create_post(&state.conn, form)
+    PostRepository::create_post(&state.conn, form)
         .await
         .expect("could not insert post");
 
@@ -149,7 +149,7 @@ async fn edit_post(
     state: State<AppState>,
     Path(id): Path<i32>,
 ) -> Result<Html<String>, (StatusCode, &'static str)> {
-    let post: post::Model = QueryCore::find_post_by_id(&state.conn, id)
+    let post: post::Model = PostRepository::find_post_by_id(&state.conn, id)
         .await
         .expect("could not find post")
         .unwrap_or_else(|| panic!("could not find post with id {id}"));
@@ -173,7 +173,7 @@ async fn update_post(
 ) -> Result<PostResponse, (StatusCode, String)> {
     let form = form.0;
 
-    MutationCore::update_post_by_id(&state.conn, id, form)
+    PostRepository::update_post_by_id(&state.conn, id, form)
         .await
         .expect("could not edit post");
 
@@ -190,7 +190,7 @@ async fn delete_post(
     Path(id): Path<i32>,
     mut cookies: Cookies,
 ) -> Result<PostResponse, (StatusCode, &'static str)> {
-    MutationCore::delete_post(&state.conn, id)
+    PostRepository::delete_post(&state.conn, id)
         .await
         .expect("could not delete post");
 
