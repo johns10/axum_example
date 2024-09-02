@@ -7,7 +7,6 @@ use axum::{
 };
 use axum_example_service::{
     sea_orm::{Database, DatabaseConnection},
-    PostRepository,
 };
 use std::sync::Arc;
 use migration::{Migrator, MigratorTrait};
