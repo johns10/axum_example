@@ -1,19 +1,12 @@
 mod flash;
 mod post;
+mod router;
 
-use axum::{
-    routing::{get, get_service, post},
-    Router,
-};
 use axum_example_service::sea_orm::{Database, DatabaseConnection};
 use migration::{Migrator, MigratorTrait};
 use std::env;
 use std::sync::Arc;
 use tera::Tera;
-use tower_cookies::CookieManagerLayer;
-use tower_http::services::ServeDir;
-
-use crate::post::handlers;
 
 #[tokio::main]
 async fn start() -> anyhow::Result<()> {
@@ -39,26 +32,7 @@ async fn start() -> anyhow::Result<()> {
         conn: Arc::new(conn),
     };
 
-    let app = Router::new()
-        .route("/", get(handlers::list_posts).post(handlers::create_post))
-        .route("/:id", get(handlers::edit_post).post(handlers::update_post))
-        .route("/new", get(handlers::new_post))
-        .route("/delete/:id", post(handlers::delete_post))
-        .nest_service(
-            "/static",
-            get_service(ServeDir::new(concat!(
-                env!("CARGO_MANIFEST_DIR"),
-                "/static"
-            )))
-            .handle_error(|error| async move {
-                (
-                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("Unhandled internal error: {error}"),
-                )
-            }),
-        )
-        .layer(CookieManagerLayer::new())
-        .with_state(state);
+    let app = router::create_router(state);
 
     let listener = tokio::net::TcpListener::bind(&server_url).await.unwrap();
     axum::serve(listener, app).await?;
