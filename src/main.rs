@@ -1,3 +1,3 @@
 fn main() {
-    axum_example_api::main();
+    println!("This is the root main.rs file. The actual application is in api/src/main.rs");
 }
