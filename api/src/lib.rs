@@ -11,6 +11,7 @@ use axum_example_service::{
     sea_orm::{Database, DatabaseConnection},
     PostRepository,
 };
+use std::sync::Arc;
 use entity::post;
 use flash::{get_flash_cookie, post_response, PostResponse};
 use migration::{Migrator, MigratorTrait};
@@ -39,7 +40,10 @@ async fn start() -> anyhow::Result<()> {
     let templates = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*"))
         .expect("Tera initialization failed");
 
-    let state = AppState { templates, conn };
+    let state = AppState {
+        templates,
+        conn: Arc::new(conn),
+    };
 
     let app = Router::new()
         .route("/", get(list_posts).post(create_post))
@@ -69,14 +73,14 @@ async fn start() -> anyhow::Result<()> {
 }
 
 pub struct AppState {
-    conn: DatabaseConnection,
+    conn: Arc<DatabaseConnection>,
     templates: Tera,
 }
 
 impl Clone for AppState {
     fn clone(&self) -> Self {
         Self {
-            conn: self.conn.clone(),
+            conn: Arc::clone(&self.conn),
             templates: self.templates.clone(),
         }
     }
