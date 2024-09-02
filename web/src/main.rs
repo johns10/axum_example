@@ -1,5 +1,5 @@
-use axum_example_api::{router, app_state::AppState};
-use axum_example_service::sea_orm::Database;
+use web::{router, app_state::AppState};
+use domain::sea_orm::Database;
 use migration::{Migrator, MigratorTrait};
 use std::env;
 use std::sync::Arc;

@@ -1,4 +1,4 @@
-use domain::post::repository::PostService;
+use domain::post::service::PostService;
 use entity::post;
 use sea_orm::DatabaseConnection;
 

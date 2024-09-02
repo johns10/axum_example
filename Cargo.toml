@@ -6,7 +6,7 @@ edition = "2021"
 publish = false
 
 [workspace]
-members = [".", "api", "domain", "entity", "migration"]
+members = [".", "web", "domain", "entity", "migration"]
 
 [dependencies]
-axum-example-api = { path = "api" }
+web = { path = "web" }

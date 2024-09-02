@@ -402,26 +402,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "axum-example-api"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "domain",
- "dotenvy",
- "entity",
- "migration",
- "serde",
- "serde_json",
- "tera",
- "tokio",
- "tower",
- "tower-cookies",
- "tower-http",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "backtrace"
 version = "0.3.73"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2470,7 +2450,7 @@ dependencies = [
 name = "sea-orm-axum-example"
 version = "0.1.0"
 dependencies = [
- "axum-example-api",
+ "web",
 ]
 
 [[package]]
@@ -3690,6 +3670,26 @@ name = "wasm-bindgen-shared"
 version = "0.2.93"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c62a0a307cb4a311d3a07867860911ca130c3494e8c2719593806c08bc5d0484"
+
+[[package]]
+name = "web"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "domain",
+ "dotenvy",
+ "entity",
+ "migration",
+ "serde",
+ "serde_json",
+ "tera",
+ "tokio",
+ "tower",
+ "tower-cookies",
+ "tower-http",
+ "tracing-subscriber",
+]
 
 [[package]]
 name = "web-sys"

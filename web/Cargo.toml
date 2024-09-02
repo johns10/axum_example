@@ -1,5 +1,5 @@
 [package]
-name = "axum-example-api"
+name = "web"
 version = "0.1.0"
 authors = ["Yoshiera Huang <huangjasper@126.com>"]
 edition = "2021"
