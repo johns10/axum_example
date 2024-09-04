@@ -22,7 +22,16 @@ impl PostService {
             .paginate(db, posts_per_page);
         let num_pages = paginator.num_pages().await?;
 
-        paginator.fetch_page(page - 1).await.map(|p| (p.into_iter().map(Post::from).collect(), num_pages))
+        paginator.fetch_page(page - 1).await.map(|p| {
+            (
+                p.into_iter().map(|model| Post {
+                    id: model.id,
+                    title: model.title,
+                    text: model.text,
+                }).collect(),
+                num_pages
+            )
+        })
     }
 
     pub async fn create_post(
