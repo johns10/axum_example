@@ -1,4 +1,5 @@
 use domain::post::service::PostService;
+use domain::Post;
 use entity::post;
 use sea_orm::DatabaseConnection;
 
@@ -22,7 +23,7 @@ async fn test_create_post() {
 
     let post = PostService::create_post(
         &db,
-        post::Model {
+        Post {
             id: 0,
             title: "Title D".to_owned(),
             text: "Text D".to_owned(),
@@ -48,7 +49,7 @@ async fn test_update_post_by_id() {
     let post = PostService::update_post_by_id(
         &db,
         1,
-        post::Model {
+        Post {
             id: 1,
             title: "New Title A".to_owned(),
             text: "New Text A".to_owned(),

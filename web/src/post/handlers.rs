@@ -5,7 +5,6 @@ use axum::{
 };
 use domain::Post;
 use domain::PostService;
-use entity::post;
 use serde::{Deserialize, Serialize};
 use tower_cookies::Cookies;
 
@@ -69,7 +68,7 @@ pub async fn new_post(state: State<AppState>) -> Result<Html<String>, (StatusCod
 pub async fn create_post(
     state: State<AppState>,
     mut cookies: Cookies,
-    form: Form<post::Model>,
+    form: Form<Post>,
 ) -> Result<PostResponse, (StatusCode, &'static str)> {
     let form = form.0;
 
@@ -109,7 +108,7 @@ pub async fn update_post(
     state: State<AppState>,
     Path(id): Path<i32>,
     mut cookies: Cookies,
-    form: Form<post::Model>,
+    form: Form<Post>,
 ) -> Result<PostResponse, (StatusCode, String)> {
     let form = form.0;
 

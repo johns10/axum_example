@@ -24,20 +24,19 @@ impl PostService {
 
         paginator.fetch_page(page - 1).await.map(|p| {
             (
-                p.into_iter().map(|model| Post {
-                    id: model.id,
-                    title: model.title,
-                    text: model.text,
-                }).collect(),
-                num_pages
+                p.into_iter()
+                    .map(|model| Post {
+                        id: model.id,
+                        title: model.title,
+                        text: model.text,
+                    })
+                    .collect(),
+                num_pages,
             )
         })
     }
 
-    pub async fn create_post(
-        db: &DbConn,
-        form_data: post::Model,
-    ) -> Result<post::ActiveModel, DbErr> {
+    pub async fn create_post(db: &DbConn, form_data: Post) -> Result<post::ActiveModel, DbErr> {
         post::ActiveModel {
             title: Set(form_data.title.to_owned()),
             text: Set(form_data.text.to_owned()),
@@ -50,7 +49,7 @@ impl PostService {
     pub async fn update_post_by_id(
         db: &DbConn,
         id: i32,
-        form_data: post::Model,
+        form_data: Post,
     ) -> Result<post::Model, DbErr> {
         let post: post::ActiveModel = post::Entity::find_by_id(id)
             .one(db)
