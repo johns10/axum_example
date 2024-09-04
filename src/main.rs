@@ -12,7 +12,7 @@ async fn main() -> anyhow::Result<()> {
     let conn = db::initialize(&settings.database_url).await?;
     let app = server::create_app(conn)?;
 
-    server::start(app, &settings.host, &settings.port.to_string()).await?;
+    server::start(app, &settings.host, settings.port).await?;
 
     Ok(())
 }
