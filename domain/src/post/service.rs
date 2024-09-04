@@ -1,25 +1,28 @@
-use crate::Post;
+use crate::post::model::Post;
 use ::entity::post;
 use sea_orm::*;
 
 pub struct PostService;
 
 impl PostService {
-    pub async fn find_post_by_id(db: &DbConn, id: i32) -> Result<Option<post::Model>, DbErr> {
-        post::Entity::find_by_id(id).one(db).await
+    pub async fn find_post_by_id(db: &DbConn, id: i32) -> Result<Option<Post>, DbErr> {
+        post::Entity::find_by_id(id)
+            .one(db)
+            .await
+            .map(|opt_model| opt_model.map(Post::from))
     }
 
     pub async fn find_posts_in_page(
         db: &DbConn,
         page: u64,
         posts_per_page: u64,
-    ) -> Result<(Vec<post::Model>, u64), DbErr> {
+    ) -> Result<(Vec<Post>, u64), DbErr> {
         let paginator = post::Entity::find()
             .order_by_asc(post::Column::Id)
             .paginate(db, posts_per_page);
         let num_pages = paginator.num_pages().await?;
 
-        paginator.fetch_page(page - 1).await.map(|p| (p, num_pages))
+        paginator.fetch_page(page - 1).await.map(|p| (p.into_iter().map(Post::from).collect(), num_pages))
     }
 
     pub async fn create_post(
