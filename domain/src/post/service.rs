@@ -1,11 +1,11 @@
-use ::entity::{post, post::Entity as Post};
+use ::entity::post;
 use sea_orm::*;
 
 pub struct PostService;
 
 impl PostService {
     pub async fn find_post_by_id(db: &DbConn, id: i32) -> Result<Option<post::Model>, DbErr> {
-        Post::find_by_id(id).one(db).await
+        post::Entity::find_by_id(id).one(db).await
     }
 
     pub async fn find_posts_in_page(
@@ -13,7 +13,7 @@ impl PostService {
         page: u64,
         posts_per_page: u64,
     ) -> Result<(Vec<post::Model>, u64), DbErr> {
-        let paginator = Post::find()
+        let paginator = post::Entity::find()
             .order_by_asc(post::Column::Id)
             .paginate(db, posts_per_page);
         let num_pages = paginator.num_pages().await?;
@@ -39,7 +39,7 @@ impl PostService {
         id: i32,
         form_data: post::Model,
     ) -> Result<post::Model, DbErr> {
-        let post: post::ActiveModel = Post::find_by_id(id)
+        let post: post::ActiveModel = post::Entity::find_by_id(id)
             .one(db)
             .await?
             .ok_or(DbErr::Custom("Cannot find post.".to_owned()))
@@ -55,7 +55,7 @@ impl PostService {
     }
 
     pub async fn delete_post(db: &DbConn, id: i32) -> Result<DeleteResult, DbErr> {
-        let post: post::ActiveModel = Post::find_by_id(id)
+        let post: post::ActiveModel = post::Entity::find_by_id(id)
             .one(db)
             .await?
             .ok_or(DbErr::Custom("Cannot find post.".to_owned()))
@@ -65,6 +65,6 @@ impl PostService {
     }
 
     pub async fn delete_all_posts(db: &DbConn) -> Result<DeleteResult, DbErr> {
-        Post::delete_many().exec(db).await
+        post::Entity::delete_many().exec(db).await
     }
 }
