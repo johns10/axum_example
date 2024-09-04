@@ -10,7 +10,7 @@ pub fn create_app(conn: DatabaseConnection) -> anyhow::Result<Router> {
     Ok(router::create_router(state))
 }
 
-pub async fn start(app: Router, host: &str, port: &str) -> anyhow::Result<()> {
+pub async fn start(app: Router, host: &str, port: u16) -> anyhow::Result<()> {
     let server_url = format!("{host}:{port}");
     let listener = tokio::net::TcpListener::bind(&server_url).await?;
     axum::serve(listener, app).await?;
