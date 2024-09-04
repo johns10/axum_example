@@ -3,6 +3,7 @@ use axum::{
     http::StatusCode,
     response::Html,
 };
+use domain::Post;
 use domain::PostService;
 use entity::post;
 use serde::{Deserialize, Serialize};
@@ -88,7 +89,7 @@ pub async fn edit_post(
     state: State<AppState>,
     Path(id): Path<i32>,
 ) -> Result<Html<String>, (StatusCode, &'static str)> {
-    let post: post::Model = PostService::find_post_by_id(&state.conn, id)
+    let post: Post = PostService::find_post_by_id(&state.conn, id)
         .await
         .expect("could not find post")
         .unwrap_or_else(|| panic!("could not find post with id {id}"));
