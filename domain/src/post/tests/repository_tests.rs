@@ -1,6 +1,5 @@
 use domain::post::model::PostForm;
 use domain::post::service::PostService;
-use domain::Post;
 use entity::post;
 use sea_orm::DatabaseConnection;
 
