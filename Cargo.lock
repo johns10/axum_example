@@ -1728,6 +1728,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "myapp"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "config",
+ "domain",
+ "dotenvy",
+ "serde",
+ "tokio",
+ "web",
+]
+
+[[package]]
 name = "native-tls"
 version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2572,19 +2585,6 @@ dependencies = [
  "tracing",
  "url",
  "uuid",
-]
-
-[[package]]
-name = "sea-orm-axum-example"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "config",
- "domain",
- "dotenvy",
- "serde",
- "tokio",
- "web",
 ]
 
 [[package]]
