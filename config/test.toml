@@ -1,0 +1,1 @@
+database_url = "postgres://postgres:password@localhost/myapp_test"
