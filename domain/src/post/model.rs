@@ -3,7 +3,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Post {
-    pub id: Option<i32>,
+    pub id: i32,
+    pub title: String,
+    pub text: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct NewPost {
     pub title: String,
     pub text: String,
 }
@@ -11,7 +17,7 @@ pub struct Post {
 impl From<post::Model> for Post {
     fn from(model: post::Model) -> Self {
         Self {
-            id: Some(model.id),
+            id: model.id,
             title: model.title,
             text: model.text,
         }

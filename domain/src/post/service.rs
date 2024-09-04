@@ -1,4 +1,4 @@
-use crate::post::model::Post;
+use crate::post::model::{NewPost, Post};
 use ::entity::post;
 use sea_orm::*;
 
@@ -26,7 +26,7 @@ impl PostService {
             (
                 p.into_iter()
                     .map(|model| Post {
-                        id: Some(model.id),
+                        id: model.id,
                         title: model.title,
                         text: model.text,
                     })
@@ -36,12 +36,11 @@ impl PostService {
         })
     }
 
-    pub async fn create_post(db: &DbConn, form_data: Post) -> Result<post::ActiveModel, DbErr> {
+    pub async fn create_post(db: &DbConn, form_data: NewPost) -> Result<post::ActiveModel, DbErr> {
         post::ActiveModel {
             id: ActiveValue::NotSet,
-            title: Set(form_data.title.to_owned()),
-            text: Set(form_data.text.to_owned()),
-            ..Default::default()
+            title: Set(form_data.title),
+            text: Set(form_data.text),
         }
         .save(db)
         .await

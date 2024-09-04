@@ -1,3 +1,4 @@
+use domain::post::model::NewPost;
 use domain::post::service::PostService;
 use domain::Post;
 use entity::post;
@@ -23,8 +24,7 @@ async fn test_create_post() {
 
     let post = PostService::create_post(
         &db,
-        Post {
-            id: 0,
+        NewPost {
             title: "Title D".to_owned(),
             text: "Text D".to_owned(),
         },
