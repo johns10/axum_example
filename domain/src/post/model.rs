@@ -9,7 +9,7 @@ pub struct Post {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NewPost {
+pub struct PostForm {
     pub title: String,
     pub text: String,
 }

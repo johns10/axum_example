@@ -1,4 +1,4 @@
-use crate::post::model::{NewPost, Post};
+use crate::post::model::{Post, PostForm};
 use ::entity::post;
 use sea_orm::*;
 
@@ -36,7 +36,7 @@ impl PostService {
         })
     }
 
-    pub async fn create_post(db: &DbConn, form_data: NewPost) -> Result<post::ActiveModel, DbErr> {
+    pub async fn create_post(db: &DbConn, form_data: PostForm) -> Result<post::ActiveModel, DbErr> {
         post::ActiveModel {
             id: ActiveValue::NotSet,
             title: Set(form_data.title),
@@ -49,7 +49,7 @@ impl PostService {
     pub async fn update_post_by_id(
         db: &DbConn,
         id: i32,
-        form_data: Post,
+        form_data: PostForm,
     ) -> Result<post::Model, DbErr> {
         let post: post::ActiveModel = post::Entity::find_by_id(id)
             .one(db)
