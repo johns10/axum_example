@@ -26,7 +26,7 @@ impl PostService {
             (
                 p.into_iter()
                     .map(|model| Post {
-                        id: model.id,
+                        id: Some(model.id),
                         title: model.title,
                         text: model.text,
                     })
@@ -38,6 +38,7 @@ impl PostService {
 
     pub async fn create_post(db: &DbConn, form_data: Post) -> Result<post::ActiveModel, DbErr> {
         post::ActiveModel {
+            id: ActiveValue::NotSet,
             title: Set(form_data.title.to_owned()),
             text: Set(form_data.text.to_owned()),
             ..Default::default()

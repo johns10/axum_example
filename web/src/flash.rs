@@ -45,7 +45,7 @@ where
     cookies.add(cookie);
 
     let mut header = HeaderMap::new();
-    header.insert(header::LOCATION, HeaderValue::from_static("/"));
+    header.insert(header::LOCATION, HeaderValue::from_static("/posts"));
 
     (StatusCode::SEE_OTHER, header)
 }

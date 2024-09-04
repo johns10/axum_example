@@ -817,7 +817,9 @@ dependencies = [
 name = "domain"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "entity",
+ "migration",
  "sea-orm",
  "serde",
  "tokio",
@@ -2451,6 +2453,10 @@ dependencies = [
 name = "sea-orm-axum-example"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "domain",
+ "dotenvy",
+ "tokio",
  "web",
 ]
 
@@ -3689,7 +3695,6 @@ dependencies = [
  "anyhow",
  "axum",
  "domain",
- "dotenvy",
  "migration",
  "serde",
  "serde_json",

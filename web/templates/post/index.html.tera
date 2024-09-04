@@ -20,8 +20,8 @@
         <td>{{ post.title }}</td>
         <td>{{ post.text | truncate(length=50) }}</td>
         <td>
-          <a href="/{{ post.id }}">Edit</a> |
-          <form style="display:inline;" action="/delete/{{ post.id }}" method="post">
+          <a href="/posts/{{ post.id }}">Edit</a> |
+          <form style="display:inline;" action="/posts/delete/{{ post.id }}" method="post">
             <input type="submit" value="Delete" onclick="return confirm('Are you sure?');">
           </form>
         </td>
@@ -33,14 +33,14 @@
   <div class="row">
     <div class="six columns">
       {% if page > 1 %}
-        <a href="/?page={{ page - 1 }}&posts_per_page={{ posts_per_page }}">Previous</a>
+        <a href="/posts?page={{ page - 1 }}&posts_per_page={{ posts_per_page }}">Previous</a>
       {% endif %}
       {% if page < num_pages %}
-        <a href="/?page={{ page + 1 }}&posts_per_page={{ posts_per_page }}">Next</a>
+        <a href="/posts?page={{ page + 1 }}&posts_per_page={{ posts_per_page }}">Next</a>
       {% endif %}
     </div>
     <div class="six columns" style="text-align: right;">
-      <a href="/new" class="button button-primary">Add New Post</a>
+      <a href="/posts/new" class="button button-primary">Add New Post</a>
     </div>
   </div>
 </div>

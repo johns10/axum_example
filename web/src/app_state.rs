@@ -1,10 +1,19 @@
-use domain::sea_orm::DatabaseConnection;
+use domain::DatabaseConnection;
 use std::sync::Arc;
 use tera::Tera;
 
 pub struct AppState {
     pub conn: Arc<DatabaseConnection>,
     pub templates: Tera,
+}
+
+impl AppState {
+    pub fn new(conn: DatabaseConnection, templates: Tera) -> Self {
+        Self {
+            conn: Arc::new(conn),
+            templates,
+        }
+    }
 }
 
 impl Clone for AppState {

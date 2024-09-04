@@ -1,9 +1,9 @@
-use web::{router, app_state::AppState};
 use domain::sea_orm::Database;
 use migration::{Migrator, MigratorTrait};
 use std::env;
 use std::sync::Arc;
 use tera::Tera;
+use web::{app_state::AppState, router};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
