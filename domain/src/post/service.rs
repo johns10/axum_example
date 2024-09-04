@@ -1,3 +1,4 @@
+use crate::Post;
 use ::entity::post;
 use sea_orm::*;
 
