@@ -4,7 +4,8 @@ use axum::{
     response::Html,
 };
 use domain::post::model::{PostForm, Post};
-use domain::PostService;
+use domain::post::service::PostService;
+use domain::post::repository::PostRepository;
 use serde::{Deserialize, Serialize};
 use tower_cookies::Cookies;
 
@@ -33,7 +34,8 @@ pub async fn list_posts(
     let page = params.page.unwrap_or(1);
     let posts_per_page = params.posts_per_page.unwrap_or(5);
 
-    let (posts, num_pages) = PostService::find_posts_in_page(&state.conn, page, posts_per_page)
+    let post_service = PostService::new(&*state.repository.post);
+    let (posts, num_pages) = post_service.find_posts_in_page(page, posts_per_page)
         .await
         .expect("Cannot find posts in page");
 
@@ -72,7 +74,8 @@ pub async fn create_post(
 ) -> Result<PostResponse, (StatusCode, &'static str)> {
     let form = form.0;
 
-    PostService::create_post(&state.conn, form)
+    let post_service = PostService::new(&*state.repository.post);
+    post_service.create_post(form)
         .await
         .expect("could not insert post");
 
@@ -88,7 +91,8 @@ pub async fn edit_post(
     state: State<AppState>,
     Path(id): Path<i32>,
 ) -> Result<Html<String>, (StatusCode, &'static str)> {
-    let post: Post = PostService::find_post_by_id(&state.conn, id)
+    let post_service = PostService::new(&*state.repository.post);
+    let post: Post = post_service.find_post_by_id(id)
         .await
         .expect("could not find post")
         .unwrap_or_else(|| panic!("could not find post with id {id}"));
@@ -112,7 +116,8 @@ pub async fn update_post(
 ) -> Result<PostResponse, (StatusCode, String)> {
     let form = form.0;
 
-    PostService::update_post_by_id(&state.conn, id, form)
+    let post_service = PostService::new(&*state.repository.post);
+    post_service.update_post_by_id(id, form)
         .await
         .expect("could not edit post");
 
@@ -129,7 +134,8 @@ pub async fn delete_post(
     Path(id): Path<i32>,
     mut cookies: Cookies,
 ) -> Result<PostResponse, (StatusCode, &'static str)> {
-    PostService::delete_post(&state.conn, id)
+    let post_service = PostService::new(&*state.repository.post);
+    post_service.delete_post(id)
         .await
         .expect("could not delete post");
 
