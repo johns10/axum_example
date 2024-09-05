@@ -89,7 +89,7 @@ pub async fn create_post(
 pub async fn edit_post(
     state: State<AppState>,
     Path(id): Path<i32>,
-) -> Result<Html<String>, (StatusCode, &'static str)> {
+) -> Result<Html<String>, (StatusCode, String)> {
     let post_service = PostService::new(&*state.repository.post);
     let post: Post = post_service.find_post_by_id(id)
         .await
@@ -101,7 +101,7 @@ pub async fn edit_post(
     let body = state
         .templates
         .render("post/edit.html.tera", &ctx)
-        .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
     Ok(Html(body))
 }
