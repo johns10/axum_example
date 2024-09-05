@@ -1,4 +1,4 @@
-use domain::db;
+use domain::{db, repository::Repository};
 use web::server;
 
 mod config;
@@ -10,7 +10,8 @@ async fn main() -> anyhow::Result<()> {
     let settings = Settings::new().expect("Failed to load settings");
 
     let conn = db::initialize(&settings.database_url).await?;
-    let app = server::create_app(conn)?;
+    let repository = Repository::new(&conn);
+    let app = server::create_app(repository)?;
 
     server::start(app, &settings.host, settings.port).await?;
 
