@@ -8,7 +8,7 @@ use domain::post::repository::PostRepository;
 use domain::repository::Repository;
 use mockall::predicate::*;
 use std::sync::Arc;
-use tower::ServiceExt;
+use tower::util::ServiceExt;
 
 use crate::post::handlers;
 use crate::AppState;
