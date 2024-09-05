@@ -93,8 +93,7 @@ pub async fn edit_post(
     let post_service = PostService::new(&*state.repository.post);
     let post: Post = post_service.find_post_by_id(id)
         .await
-        .expect("could not find post")
-        .unwrap_or_else(|| panic!("could not find post with id {id}"));
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
     let mut ctx = tera::Context::new();
     ctx.insert("post", &post);

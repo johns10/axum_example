@@ -5,7 +5,6 @@ use domain::post::service::PostService;
 use domain::PostRepository;
 use mockall::mock;
 use sea_orm::*;
-use std::sync::Arc;
 
 mock! {
     pub PostRepository {}
@@ -38,7 +37,7 @@ async fn test_find_post_by_id() {
 
     let service = PostService::new(&mock_repo);
 
-    let post = service.find_post_by_id(1).await.unwrap().unwrap();
+    let post = service.find_post_by_id(1).await.unwrap();
     assert_eq!(post.id, 1);
     assert_eq!(post.title, "Test Post");
     assert_eq!(post.text, "This is a test post");
@@ -71,9 +70,9 @@ async fn test_create_post() {
         .await
         .unwrap();
 
-    assert_eq!(post.id.unwrap(), 1);
-    assert_eq!(post.title.unwrap(), "New Post");
-    assert_eq!(post.text.unwrap(), "This is a new post");
+    assert_eq!(post.id, 1);
+    assert_eq!(post.title, "New Post");
+    assert_eq!(post.text, "This is a new post");
 }
 
 #[tokio::test]
@@ -125,8 +124,8 @@ async fn test_delete_post() {
 
     let service = PostService::new(&mock_repo);
 
-    let result = service.delete_post(1).await.unwrap();
-    assert_eq!(result.rows_affected, 1);
+    let result = service.delete_post(1).await;
+    assert!(result.is_ok());
 }
 
 #[tokio::test]
@@ -139,6 +138,6 @@ async fn test_delete_all_posts() {
 
     let service = PostService::new(&mock_repo);
 
-    let result = service.delete_all_posts().await.unwrap();
-    assert_eq!(result.rows_affected, 5);
+    let result = service.delete_all_posts().await;
+    assert!(result.is_ok());
 }
