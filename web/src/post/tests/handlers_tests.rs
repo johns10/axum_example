@@ -1,3 +1,4 @@
+use axum::body::to_bytes;
 use axum::{
     body::Body,
     http::{Request, StatusCode},
@@ -7,12 +8,11 @@ use domain::post::repository::PostRepository;
 use domain::repository::Repository;
 use mockall::predicate::*;
 use std::sync::Arc;
-use tower::ServiceExt; // Change this line
-use axum::body::to_bytes;
+use tower::util::ServiceExt; // Change this line
 
 use crate::post::handlers;
-use crate::post::tests::db_mocks::MockPostRepository;
 use crate::AppState;
+use domain::post::tests::db_mocks::MockPostRepository;
 
 fn create_app_state() -> AppState {
     let mock_repo = MockPostRepository::new();
