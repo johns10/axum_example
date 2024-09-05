@@ -12,12 +12,12 @@ pub trait PostRepository {
     async fn delete_all_posts(&self) -> Result<DeleteResult, DbErr>;
 }
 
-pub struct PostRepositoryImpl {
-    db: DatabaseConnection,
+pub struct PostRepositoryImpl<'a> {
+    db: &'a DatabaseConnection,
 }
 
-impl PostRepositoryImpl {
-    pub fn new(db: DatabaseConnection) -> Self {
+impl<'a> PostRepositoryImpl<'a> {
+    pub fn new(db: &'a DatabaseConnection) -> Self {
         Self { db }
     }
 }
