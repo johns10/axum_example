@@ -27,9 +27,21 @@ impl From<post::Model> for Post {
 impl From<post::ActiveModel> for Post {
     fn from(active_model: post::ActiveModel) -> Self {
         Self {
-            id: active_model.id.unwrap_or_default(),
-            title: active_model.title.unwrap_or_default(),
-            text: active_model.text.unwrap_or_default(),
+            id: match active_model.id {
+                ActiveValue::Set(id) => id,
+                ActiveValue::Unchanged(id) => id,
+                _ => Default::default(),
+            },
+            title: match active_model.title {
+                ActiveValue::Set(title) => title,
+                ActiveValue::Unchanged(title) => title,
+                _ => Default::default(),
+            },
+            text: match active_model.text {
+                ActiveValue::Set(text) => text,
+                ActiveValue::Unchanged(text) => text,
+                _ => Default::default(),
+            },
         }
     }
 }
