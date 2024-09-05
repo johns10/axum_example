@@ -14,8 +14,7 @@ use crate::post::handlers;
 use crate::AppState;
 use domain::post::tests::db_mocks::MockPostRepository;
 
-fn create_app_state() -> AppState {
-    let mock_repo = MockPostRepository::new();
+fn create_app_state(mock_repo: MockPostRepository) -> AppState {
     let repository = Repository {
         post: Arc::new(mock_repo) as Arc<dyn PostRepository + Send + Sync>,
     };
@@ -28,10 +27,7 @@ fn create_app_state() -> AppState {
 
 #[tokio::test]
 async fn test_list_posts() {
-    let app_state = create_app_state();
-    let mock_repo = app_state.repository.post.clone();
-    let mock_repo = mock_repo.downcast_arc::<MockPostRepository>().unwrap();
-
+    let mut mock_repo = MockPostRepository::new();
     mock_repo
         .expect_find_posts_in_page()
         .with(eq(1), eq(5))
@@ -54,6 +50,8 @@ async fn test_list_posts() {
             ))
         });
 
+    let app_state = create_app_state(mock_repo);
+
     let app = axum::Router::new()
         .route("/", axum::routing::get(handlers::list_posts))
         .with_state(app_state);
@@ -72,10 +70,7 @@ async fn test_list_posts() {
 
 #[tokio::test]
 async fn test_create_post() {
-    let app_state = create_app_state();
-    let mock_repo = app_state.repository.post.clone();
-    let mock_repo = mock_repo.downcast_arc::<MockPostRepository>().unwrap();
-
+    let mut mock_repo = MockPostRepository::new();
     mock_repo
         .expect_create_post()
         .with(function(|post: &Post| {
@@ -89,6 +84,8 @@ async fn test_create_post() {
                 text: post.text,
             })
         });
+
+    let app_state = create_app_state(mock_repo);
 
     let app = axum::Router::new()
         .route("/", axum::routing::post(handlers::create_post))
@@ -112,15 +109,14 @@ async fn test_create_post() {
 
 #[tokio::test]
 async fn test_delete_post() {
-    let app_state = create_app_state();
-    let mock_repo = app_state.repository.post.clone();
-    let mock_repo = mock_repo.downcast_arc::<MockPostRepository>().unwrap();
-
+    let mut mock_repo = MockPostRepository::new();
     mock_repo
         .expect_delete_post()
         .with(eq(1))
         .times(1)
         .returning(|_| Ok(1));
+
+    let app_state = create_app_state(mock_repo);
 
     let app = axum::Router::new()
         .route("/:id", axum::routing::post(handlers::delete_post))
