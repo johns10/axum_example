@@ -77,13 +77,11 @@ impl<'a> PostService<'a> {
         self.repository.update_post_by_id(id, post).await.map_err(PostServiceError::from)
     }
 
-    pub async fn delete_post(&self, id: i32) -> Result<(), PostServiceError> {
-        self.repository.delete_post(id).await?;
-        Ok(())
+    pub async fn delete_post(&self, id: i32) -> Result<u64, PostServiceError> {
+        self.repository.delete_post(id).await.map_err(PostServiceError::from)
     }
 
-    pub async fn delete_all_posts(&self) -> Result<(), PostServiceError> {
-        self.repository.delete_all_posts().await?;
-        Ok(())
+    pub async fn delete_all_posts(&self) -> Result<u64, PostServiceError> {
+        self.repository.delete_all_posts().await.map_err(PostServiceError::from)
     }
 }

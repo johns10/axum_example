@@ -2,7 +2,6 @@ use domain::post::model::PostForm;
 use domain::post::service::PostService;
 use domain::post::tests::db_mocks::MockPostRepository;
 use domain::Post;
-use sea_orm::*;
 
 #[tokio::test]
 async fn test_find_post_by_id() {
@@ -104,12 +103,12 @@ async fn test_delete_post() {
         .expect_delete_post()
         .with(mockall::predicate::eq(1))
         .times(1)
-        .returning(|_| Ok(DeleteResult { rows_affected: 1 }));
+        .returning(|_| Ok(1));
 
     let service = PostService::new(&mock_repo);
 
     let result = service.delete_post(1).await;
-    assert!(result.is_ok());
+    assert_eq!(result.unwrap(), 1);
 }
 
 #[tokio::test]
@@ -118,10 +117,10 @@ async fn test_delete_all_posts() {
     mock_repo
         .expect_delete_all_posts()
         .times(1)
-        .returning(|| Ok(DeleteResult { rows_affected: 5 }));
+        .returning(|| Ok(5));
 
     let service = PostService::new(&mock_repo);
 
     let result = service.delete_all_posts().await;
-    assert!(result.is_ok());
+    assert_eq!(result.unwrap(), 5);
 }

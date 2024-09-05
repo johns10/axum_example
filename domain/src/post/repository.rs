@@ -13,8 +13,8 @@ pub trait PostRepository: Send + Sync {
     ) -> Result<(Vec<Post>, u64), DbErr>;
     async fn create_post(&self, post: Post) -> Result<Post, DbErr>;
     async fn update_post_by_id(&self, id: i32, post: Post) -> Result<Post, DbErr>;
-    async fn delete_post(&self, id: i32) -> Result<DeleteResult, DbErr>;
-    async fn delete_all_posts(&self) -> Result<DeleteResult, DbErr>;
+    async fn delete_post(&self, id: i32) -> Result<u64, DbErr>;
+    async fn delete_all_posts(&self) -> Result<u64, DbErr>;
 }
 
 use std::sync::Arc;
@@ -71,11 +71,11 @@ impl PostRepository for PostRepositoryImpl {
         Ok(Post::from(result))
     }
 
-    async fn delete_post(&self, id: i32) -> Result<DeleteResult, DbErr> {
-        post::Entity::delete_by_id(id).exec(self.conn.as_ref()).await
+    async fn delete_post(&self, id: i32) -> Result<u64, DbErr> {
+        post::Entity::delete_by_id(id).exec(self.conn.as_ref()).await.map(|res| res.rows_affected)
     }
 
-    async fn delete_all_posts(&self) -> Result<DeleteResult, DbErr> {
-        post::Entity::delete_many().exec(self.conn.as_ref()).await
+    async fn delete_all_posts(&self) -> Result<u64, DbErr> {
+        post::Entity::delete_many().exec(self.conn.as_ref()).await.map(|res| res.rows_affected)
     }
 }
