@@ -1,82 +1,63 @@
 use crate::post::model::{Post, PostForm};
+use crate::post::repository::PostRepository;
 use ::entity::post;
 use sea_orm::*;
 
-pub struct PostService;
+pub struct PostService<'a> {
+    repository: &'a dyn PostRepository,
+}
 
-impl PostService {
-    pub async fn find_post_by_id(db: &DbConn, id: i32) -> Result<Option<Post>, DbErr> {
-        post::Entity::find_by_id(id)
-            .one(db)
+impl<'a> PostService<'a> {
+    pub fn new(repository: &'a dyn PostRepository) -> Self {
+        Self { repository }
+    }
+
+    pub async fn find_post_by_id(&self, id: i32) -> Result<Option<Post>, DbErr> {
+        self.repository
+            .find_post_by_id(id)
             .await
             .map(|opt_model| opt_model.map(Post::from))
     }
 
     pub async fn find_posts_in_page(
-        db: &DbConn,
+        &self,
         page: u64,
         posts_per_page: u64,
     ) -> Result<(Vec<Post>, u64), DbErr> {
-        let paginator = post::Entity::find()
-            .order_by_asc(post::Column::Id)
-            .paginate(db, posts_per_page);
-        let num_pages = paginator.num_pages().await?;
-
-        paginator.fetch_page(page - 1).await.map(|p| {
-            (
-                p.into_iter()
-                    .map(|model| Post {
-                        id: model.id,
-                        title: model.title,
-                        text: model.text,
-                    })
-                    .collect(),
-                num_pages,
-            )
-        })
+        let (posts, num_pages) = self
+            .repository
+            .find_posts_in_page(page, posts_per_page)
+            .await?;
+        Ok((posts.into_iter().map(Post::from).collect(), num_pages))
     }
 
-    pub async fn create_post(db: &DbConn, form_data: PostForm) -> Result<post::ActiveModel, DbErr> {
-        post::ActiveModel {
-            id: ActiveValue::NotSet,
-            title: Set(form_data.title),
-            text: Set(form_data.text),
-        }
-        .save(db)
-        .await
+    pub async fn create_post(&self, form_data: PostForm) -> Result<post::ActiveModel, DbErr> {
+        let post_model = post::Model {
+            id: 0, // This will be ignored by the repository
+            title: form_data.title,
+            text: form_data.text,
+        };
+        self.repository.create_post(post_model).await
     }
 
     pub async fn update_post_by_id(
-        db: &DbConn,
+        &self,
         id: i32,
         form_data: PostForm,
     ) -> Result<post::Model, DbErr> {
-        let post: post::ActiveModel = post::Entity::find_by_id(id)
-            .one(db)
-            .await?
-            .ok_or(DbErr::Custom("Cannot find post.".to_owned()))
-            .map(Into::into)?;
-
-        post::ActiveModel {
-            id: post.id,
-            title: Set(form_data.title.to_owned()),
-            text: Set(form_data.text.to_owned()),
-        }
-        .update(db)
-        .await
+        let post_model = post::Model {
+            id,
+            title: form_data.title,
+            text: form_data.text,
+        };
+        self.repository.update_post_by_id(id, post_model).await
     }
 
-    pub async fn delete_post(db: &DbConn, id: i32) -> Result<DeleteResult, DbErr> {
-        let post: post::ActiveModel = post::Entity::find_by_id(id)
-            .one(db)
-            .await?
-            .ok_or(DbErr::Custom("Cannot find post.".to_owned()))
-            .map(Into::into)?;
-
-        post.delete(db).await
+    pub async fn delete_post(&self, id: i32) -> Result<DeleteResult, DbErr> {
+        self.repository.delete_post(id).await
     }
 
-    pub async fn delete_all_posts(db: &DbConn) -> Result<DeleteResult, DbErr> {
-        post::Entity::delete_many().exec(db).await
+    pub async fn delete_all_posts(&self) -> Result<DeleteResult, DbErr> {
+        self.repository.delete_all_posts().await
     }
 }
