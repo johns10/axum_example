@@ -2,6 +2,9 @@ pub mod post {
     pub mod model;
     pub mod repository;
     pub mod service;
+    pub mod tests {
+        pub mod db_mocks;
+    }
 }
 pub mod db;
 pub mod repository;

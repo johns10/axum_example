@@ -1,6 +1,6 @@
+use crate::PostRepository;
 use ::entity::post;
 use async_trait::async_trait;
-use domain::PostRepository;
 use mockall::mock;
 use mockall::predicate::*;
 use sea_orm::*;
