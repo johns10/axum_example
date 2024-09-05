@@ -29,5 +29,5 @@ name = "domain"
 path = "src/lib.rs"
 
 [[test]]
-name = "repository_tests"
-path = "src/post/tests/repository_tests.rs"
+name = "service_tests"
+path = "src/post/tests/service_tests.rs"
