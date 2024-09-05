@@ -23,7 +23,7 @@ impl<'a> PostRepositoryImpl<'a> {
 }
 
 #[async_trait]
-impl PostRepository for PostRepositoryImpl {
+impl<'a> PostRepository for PostRepositoryImpl<'a> {
     async fn find_post_by_id(&self, id: i32) -> Result<Option<post::Model>, DbErr> {
         post::Entity::find_by_id(id).one(&self.db).await
     }
