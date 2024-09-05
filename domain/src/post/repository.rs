@@ -35,7 +35,7 @@ impl PostRepositoryImpl {
 #[async_trait]
 impl PostRepository for PostRepositoryImpl {
     async fn find_post_by_id(&self, id: i32) -> Result<Option<post::Model>, DbErr> {
-        post::Entity::find_by_id(id).one(&*self.conn).await
+        post::Entity::find_by_id(id).one(&**self.conn).await
     }
 
     async fn find_posts_in_page(
@@ -45,7 +45,7 @@ impl PostRepository for PostRepositoryImpl {
     ) -> Result<(Vec<post::Model>, u64), DbErr> {
         let paginator = post::Entity::find()
             .order_by_asc(post::Column::Id)
-            .paginate(&*self.conn, posts_per_page);
+            .paginate(&**self.conn, posts_per_page);
         let num_pages = paginator.num_pages().await?;
 
         paginator.fetch_page(page - 1).await.map(|p| (p, num_pages))
@@ -57,7 +57,7 @@ impl PostRepository for PostRepositoryImpl {
             text: Set(form_data.text.to_owned()),
             ..Default::default()
         }
-        .save(&*self.conn)
+        .save(&**self.conn)
         .await
     }
 
@@ -67,7 +67,7 @@ impl PostRepository for PostRepositoryImpl {
         form_data: post::Model,
     ) -> Result<post::Model, DbErr> {
         let post: post::ActiveModel = post::Entity::find_by_id(id)
-            .one(&*self.conn)
+            .one(&**self.conn)
             .await?
             .ok_or(DbErr::Custom("Cannot find post.".to_owned()))
             .map(Into::into)?;
@@ -77,21 +77,21 @@ impl PostRepository for PostRepositoryImpl {
             title: Set(form_data.title.to_owned()),
             text: Set(form_data.text.to_owned()),
         }
-        .update(&*self.conn)
+        .update(&**self.conn)
         .await
     }
 
     async fn delete_post(&self, id: i32) -> Result<DeleteResult, DbErr> {
         let post: post::ActiveModel = post::Entity::find_by_id(id)
-            .one(&*self.conn)
+            .one(&**self.conn)
             .await?
             .ok_or(DbErr::Custom("Cannot find post.".to_owned()))
             .map(Into::into)?;
 
-        post.delete(&*self.conn).await
+        post.delete(&**self.conn).await
     }
 
     async fn delete_all_posts(&self) -> Result<DeleteResult, DbErr> {
-        post::Entity::delete_many().exec(&*self.conn).await
+        post::Entity::delete_many().exec(&**self.conn).await
     }
 }
