@@ -1,49 +1,20 @@
 use ::entity::post;
+use async_trait::async_trait;
+use domain::PostRepository;
+use mockall::mock;
+use mockall::predicate::*;
 use sea_orm::*;
 
-pub fn prepare_mock_db() -> DatabaseConnection {
-    MockDatabase::new(DatabaseBackend::Postgres)
-        .append_query_results([
-            [post::Model {
-                id: 1,
-                title: "Title A".to_owned(),
-                text: "Text A".to_owned(),
-            }],
-            [post::Model {
-                id: 5,
-                title: "Title C".to_owned(),
-                text: "Text C".to_owned(),
-            }],
-            [post::Model {
-                id: 6,
-                title: "Title D".to_owned(),
-                text: "Text D".to_owned(),
-            }],
-            [post::Model {
-                id: 1,
-                title: "Title A".to_owned(),
-                text: "Text A".to_owned(),
-            }],
-            [post::Model {
-                id: 1,
-                title: "New Title A".to_owned(),
-                text: "New Text A".to_owned(),
-            }],
-            [post::Model {
-                id: 5,
-                title: "Title C".to_owned(),
-                text: "Text C".to_owned(),
-            }],
-        ])
-        .append_exec_results([
-            MockExecResult {
-                last_insert_id: 6,
-                rows_affected: 1,
-            },
-            MockExecResult {
-                last_insert_id: 6,
-                rows_affected: 5,
-            },
-        ])
-        .into_connection()
+mock! {
+    pub PostRepository {}
+
+    #[async_trait]
+    impl PostRepository for PostRepository {
+        async fn find_post_by_id(&self, id: i32) -> Result<Option<post::Model>, DbErr>;
+        async fn find_posts_in_page(&self, page: u64, posts_per_page: u64) -> Result<(Vec<post::Model>, u64), DbErr>;
+        async fn create_post(&self, form_data: post::Model) -> Result<post::ActiveModel, DbErr>;
+        async fn update_post_by_id(&self, id: i32, form_data: post::Model) -> Result<post::Model, DbErr>;
+        async fn delete_post(&self, id: i32) -> Result<DeleteResult, DbErr>;
+        async fn delete_all_posts(&self) -> Result<DeleteResult, DbErr>;
+    }
 }
