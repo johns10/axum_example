@@ -3,7 +3,7 @@ use crate::post::repository::{PostRepository, PostRepositoryImpl};
 use sea_orm::DatabaseConnection;
 
 pub struct Repository {
-    pub post: Arc<dyn PostRepository>,
+    pub post: Arc<dyn PostRepository + Send + Sync>,
 }
 
 impl Repository {

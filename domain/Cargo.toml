@@ -11,6 +11,7 @@ serde = "1.0.193"
 entity = { path = "../entity" }
 migration = { path = "../migration" }
 async-trait = "0.1.82"
+mockall = "0.13.0"
 
 [dependencies.sea-orm]
 version = "~1.0.1" # sea-orm version
