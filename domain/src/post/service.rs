@@ -1,6 +1,5 @@
 use crate::post::model::{Post, PostForm};
 use crate::post::repository::PostRepository;
-use ::entity::post;
 use sea_orm::*;
 use std::error::Error;
 use std::fmt;

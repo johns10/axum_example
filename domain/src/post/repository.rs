@@ -1,6 +1,7 @@
 use crate::post::model::Post;
 use async_trait::async_trait;
 use sea_orm::*;
+use entity::post;
 
 #[async_trait]
 pub trait PostRepository: Send + Sync {
