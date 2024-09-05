@@ -4,9 +4,9 @@ use axum::{
     Router,
 };
 
-use crate::{post::handlers, AppState};
+use crate::post::handlers;
 
-pub fn create_post_router() -> Router<AppState> {
+pub fn create_post_router() -> Router {
     Router::new()
         .route("/", get(handlers::list_posts).post(handlers::create_post))
         .route("/:id", get(handlers::edit_post).post(handlers::update_post))
