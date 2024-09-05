@@ -12,7 +12,7 @@ async fn test_find_post_by_id() {
         .with(mockall::predicate::eq(1))
         .times(1)
         .returning(|_| {
-            Ok(Some(post::Model {
+            Ok(Some(Post {
                 id: 1,
                 title: "Test Post".to_string(),
                 text: "This is a test post".to_string(),
@@ -32,15 +32,15 @@ async fn test_create_post() {
     let mut mock_repo = MockPostRepository::new();
     mock_repo
         .expect_create_post()
-        .with(mockall::predicate::function(|post: &post::Model| {
+        .with(mockall::predicate::function(|post: &Post| {
             post.title == "New Post" && post.text == "This is a new post"
         }))
         .times(1)
-        .returning(|_| {
-            Ok(post::ActiveModel {
-                id: Set(1),
-                title: Set("New Post".to_string()),
-                text: Set("This is a new post".to_string()),
+        .returning(|post| {
+            Ok(Post {
+                id: 1,
+                title: post.title,
+                text: post.text,
             })
         });
 
@@ -66,16 +66,16 @@ async fn test_update_post_by_id() {
         .expect_update_post_by_id()
         .with(
             mockall::predicate::eq(1),
-            mockall::predicate::function(|post: &post::Model| {
+            mockall::predicate::function(|post: &Post| {
                 post.title == "Updated Post" && post.text == "This post has been updated"
             }),
         )
         .times(1)
-        .returning(|_, _| {
-            Ok(post::Model {
+        .returning(|_, post| {
+            Ok(Post {
                 id: 1,
-                title: "Updated Post".to_string(),
-                text: "This post has been updated".to_string(),
+                title: post.title,
+                text: post.text,
             })
         });
 
