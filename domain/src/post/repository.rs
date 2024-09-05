@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use sea_orm::*;
 
 #[async_trait]
-pub trait PostRepository {
+pub trait PostRepository: Send + Sync {
     async fn find_post_by_id(&self, id: i32) -> Result<Option<post::Model>, DbErr>;
     async fn find_posts_in_page(
         &self,
@@ -20,18 +20,20 @@ pub trait PostRepository {
     async fn delete_all_posts(&self) -> Result<DeleteResult, DbErr>;
 }
 
-pub struct PostRepositoryImpl<'a> {
-    conn: &'a DatabaseConnection,
+use std::sync::Arc;
+
+pub struct PostRepositoryImpl {
+    conn: Arc<DatabaseConnection>,
 }
 
-impl<'a> PostRepositoryImpl<'a> {
-    pub fn new(conn: &'a DatabaseConnection) -> Self {
+impl PostRepositoryImpl {
+    pub fn new(conn: Arc<DatabaseConnection>) -> Self {
         Self { conn }
     }
 }
 
 #[async_trait]
-impl<'a> PostRepository for PostRepositoryImpl<'a> {
+impl PostRepository for PostRepositoryImpl {
     async fn find_post_by_id(&self, id: i32) -> Result<Option<post::Model>, DbErr> {
         post::Entity::find_by_id(id).one(self.conn).await
     }

@@ -1,14 +1,15 @@
+use std::sync::Arc;
 use crate::post::repository::{PostRepository, PostRepositoryImpl};
 use sea_orm::DatabaseConnection;
 
-pub struct Repository<'a> {
-    pub post: Box<dyn PostRepository + 'a>,
+pub struct Repository {
+    pub post: Arc<dyn PostRepository>,
 }
 
-impl<'a> Repository<'a> {
-    pub fn new(conn: &'a DatabaseConnection) -> Self {
+impl Repository {
+    pub fn new(conn: Arc<DatabaseConnection>) -> Self {
         Self {
-            post: Box::new(PostRepositoryImpl::new(conn)),
+            post: Arc::new(PostRepositoryImpl::new(conn)),
         }
     }
 }
