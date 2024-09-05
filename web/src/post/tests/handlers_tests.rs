@@ -57,7 +57,13 @@ async fn test_list_posts() {
         .with_state(app_state);
 
     let response = app
-        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+        .oneshot(
+            Request::builder()
+                .uri("/?page=1&posts_per_page=5")
+                .header("Cookie", "")
+                .body(Body::empty())
+                .unwrap(),
+        )
         .await
         .unwrap();
 
@@ -73,15 +79,13 @@ async fn test_create_post() {
     let mut mock_repo = MockPostRepository::new();
     mock_repo
         .expect_create_post()
-        .with(function(|post: &Post| {
-            post.title == "New Post" && post.text == "New Content"
-        }))
+        .withf(|post: &Post| post.title == "New Post" && post.text == "New Content")
         .times(1)
         .returning(|post| {
             Ok(Post {
                 id: 1,
-                title: post.title,
-                text: post.text,
+                title: post.title.clone(),
+                text: post.text.clone(),
             })
         });
 
@@ -95,8 +99,9 @@ async fn test_create_post() {
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/")
+                .uri("/posts")
                 .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Cookie", "")
                 .body(Body::from("title=New+Post&text=New+Content"))
                 .unwrap(),
         )
@@ -119,14 +124,15 @@ async fn test_delete_post() {
     let app_state = create_app_state(mock_repo);
 
     let app = axum::Router::new()
-        .route("/:id", axum::routing::post(handlers::delete_post))
+        .route("/delete/:id", axum::routing::post(handlers::delete_post))
         .with_state(app_state);
 
     let response = app
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/1")
+                .uri("/delete/1")
+                .header("Cookie", "")
                 .body(Body::empty())
                 .unwrap(),
         )
