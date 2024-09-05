@@ -1,7 +1,7 @@
-use ::entity::post;
 use domain::post::model::PostForm;
 use domain::post::service::PostService;
 use domain::post::tests::db_mocks::MockPostRepository;
+use domain::Post;
 use sea_orm::*;
 
 #[tokio::test]
