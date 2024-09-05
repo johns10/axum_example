@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use domain::{db, repository::Repository};
 use web::server;
 
@@ -9,8 +10,8 @@ use crate::config::Settings;
 async fn main() -> anyhow::Result<()> {
     let settings = Settings::new().expect("Failed to load settings");
 
-    let conn = db::initialize(&settings.database_url).await?;
-    let repository = Repository::new(&conn);
+    let conn = Arc::new(db::initialize(&settings.database_url).await?);
+    let repository = Repository::new(conn);
     let app = server::create_app(repository)?;
 
     server::start(app, &settings.host, settings.port).await?;
