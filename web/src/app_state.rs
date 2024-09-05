@@ -1,16 +1,16 @@
-use domain::DatabaseConnection;
+use domain::repository::Repository;
 use std::sync::Arc;
 use tera::Tera;
 
 pub struct AppState {
-    pub conn: Arc<DatabaseConnection>,
+    pub repository: Arc<Repository<'static>>,
     pub templates: Tera,
 }
 
 impl AppState {
-    pub fn new(conn: DatabaseConnection, templates: Tera) -> Self {
+    pub fn new(repository: Repository<'static>, templates: Tera) -> Self {
         Self {
-            conn: Arc::new(conn),
+            repository: Arc::new(repository),
             templates,
         }
     }
@@ -19,7 +19,7 @@ impl AppState {
 impl Clone for AppState {
     fn clone(&self) -> Self {
         Self {
-            conn: Arc::clone(&self.conn),
+            repository: Arc::clone(&self.repository),
             templates: self.templates.clone(),
         }
     }

@@ -1,13 +1,14 @@
-use crate::post::repository::PostRepository;
+use crate::post::repository::{PostRepository, PostRepositoryImpl};
+use sea_orm::DatabaseConnection;
 
-pub struct Repository {
-    pub post: Box<dyn PostRepository>,
+pub struct Repository<'a> {
+    pub post: Box<dyn PostRepository + 'a>,
 }
 
-impl Repository {
-    pub fn new(post_repository: Box<dyn PostRepository>) -> Self {
+impl<'a> Repository<'a> {
+    pub fn new(conn: &'a DatabaseConnection) -> Self {
         Self {
-            post: post_repository,
+            post: Box::new(PostRepositoryImpl::new(conn)),
         }
     }
 }
