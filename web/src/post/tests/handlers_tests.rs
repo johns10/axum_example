@@ -1,22 +1,20 @@
 use axum::{
     body::Body,
-    extract::Path,
     http::{Request, StatusCode},
-    response::Response,
 };
-use domain::post::model::{Post, PostForm};
+use domain::post::model::Post;
 use domain::post::repository::PostRepository;
-use domain::post::service::PostService;
 use domain::repository::Repository;
 use mockall::predicate::*;
 use std::sync::Arc;
-use tower::ServiceExt;
+use tower::ServiceExt; // Change this line
+use axum::body::to_bytes;
 
 use crate::post::handlers;
 use crate::post::tests::db_mocks::MockPostRepository;
 use crate::AppState;
 
-async fn create_app_state() -> AppState {
+fn create_app_state() -> AppState {
     let mock_repo = MockPostRepository::new();
     let repository = Repository {
         post: Arc::new(mock_repo) as Arc<dyn PostRepository + Send + Sync>,
@@ -66,7 +64,7 @@ async fn test_list_posts() {
         .unwrap();
 
     assert_eq!(response.status(), StatusCode::OK);
-    let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+    let body = to_bytes(response.into_body()).await.unwrap();
     let body_str = String::from_utf8(body.to_vec()).unwrap();
     assert!(body_str.contains("Test Post 1"));
     assert!(body_str.contains("Test Post 2"));
