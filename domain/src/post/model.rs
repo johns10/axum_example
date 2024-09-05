@@ -23,3 +23,13 @@ impl From<post::Model> for Post {
         }
     }
 }
+
+impl From<post::ActiveModel> for Post {
+    fn from(active_model: post::ActiveModel) -> Self {
+        Self {
+            id: active_model.id.unwrap_or_default(),
+            title: active_model.title.unwrap_or_default(),
+            text: active_model.text.unwrap_or_default(),
+        }
+    }
+}
