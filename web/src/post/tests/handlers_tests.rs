@@ -13,15 +13,15 @@ use std::sync::Arc;
 use tower::ServiceExt;
 
 use crate::post::handlers;
-use crate::AppState;
 use crate::post::tests::db_mocks::MockPostRepository;
+use crate::AppState;
 
 async fn create_app_state() -> AppState {
     let mock_repo = MockPostRepository::new();
     let repository = Repository {
         post: Arc::new(mock_repo) as Arc<dyn PostRepository + Send + Sync>,
     };
-    
+
     AppState {
         repository: Arc::new(repository),
         templates: tera::Tera::new("templates/**/*").unwrap(),
@@ -34,14 +34,23 @@ async fn test_list_posts() {
     let mock_repo = app_state.repository.post.clone();
     let mock_repo = mock_repo.downcast_arc::<MockPostRepository>().unwrap();
 
-    mock_repo.expect_find_posts_in_page()
+    mock_repo
+        .expect_find_posts_in_page()
         .with(eq(1), eq(5))
         .times(1)
         .returning(|_, _| {
             Ok((
                 vec![
-                    Post { id: 1, title: "Test Post 1".to_string(), text: "Content 1".to_string() },
-                    Post { id: 2, title: "Test Post 2".to_string(), text: "Content 2".to_string() },
+                    Post {
+                        id: 1,
+                        title: "Test Post 1".to_string(),
+                        text: "Content 1".to_string(),
+                    },
+                    Post {
+                        id: 2,
+                        title: "Test Post 2".to_string(),
+                        text: "Content 2".to_string(),
+                    },
                 ],
                 1,
             ))
@@ -69,7 +78,8 @@ async fn test_create_post() {
     let mock_repo = app_state.repository.post.clone();
     let mock_repo = mock_repo.downcast_arc::<MockPostRepository>().unwrap();
 
-    mock_repo.expect_create_post()
+    mock_repo
+        .expect_create_post()
         .with(function(|post: &Post| {
             post.title == "New Post" && post.text == "New Content"
         }))
@@ -99,10 +109,7 @@ async fn test_create_post() {
         .unwrap();
 
     assert_eq!(response.status(), StatusCode::SEE_OTHER);
-    assert_eq!(
-        response.headers().get("Location").unwrap(),
-        "/"
-    );
+    assert_eq!(response.headers().get("Location").unwrap(), "/");
 }
 
 #[tokio::test]
@@ -111,7 +118,8 @@ async fn test_delete_post() {
     let mock_repo = app_state.repository.post.clone();
     let mock_repo = mock_repo.downcast_arc::<MockPostRepository>().unwrap();
 
-    mock_repo.expect_delete_post()
+    mock_repo
+        .expect_delete_post()
         .with(eq(1))
         .times(1)
         .returning(|_| Ok(1));
@@ -132,8 +140,5 @@ async fn test_delete_post() {
         .unwrap();
 
     assert_eq!(response.status(), StatusCode::SEE_OTHER);
-    assert_eq!(
-        response.headers().get("Location").unwrap(),
-        "/"
-    );
+    assert_eq!(response.headers().get("Location").unwrap(), "/");
 }
