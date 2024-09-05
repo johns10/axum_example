@@ -42,7 +42,6 @@ impl<'a> PostService<'a> {
         self.repository
             .find_post_by_id(id)
             .await?
-            .map(Post::from)
             .ok_or(PostServiceError::NotFound)
     }
 
@@ -51,21 +50,19 @@ impl<'a> PostService<'a> {
         page: u64,
         posts_per_page: u64,
     ) -> Result<(Vec<Post>, u64), PostServiceError> {
-        let (posts, num_pages) = self
-            .repository
+        self.repository
             .find_posts_in_page(page, posts_per_page)
-            .await?;
-        Ok((posts.into_iter().map(Post::from).collect(), num_pages))
+            .await
+            .map_err(PostServiceError::from)
     }
 
     pub async fn create_post(&self, form_data: PostForm) -> Result<Post, PostServiceError> {
-        let post_model = post::Model {
+        let post = Post {
             id: 0, // This will be ignored by the repository
             title: form_data.title,
             text: form_data.text,
         };
-        let active_model = self.repository.create_post(post_model).await?;
-        Ok(Post::from(active_model))
+        self.repository.create_post(post).await.map_err(PostServiceError::from)
     }
 
     pub async fn update_post_by_id(
@@ -73,13 +70,12 @@ impl<'a> PostService<'a> {
         id: i32,
         form_data: PostForm,
     ) -> Result<Post, PostServiceError> {
-        let post_model = post::Model {
+        let post = Post {
             id,
             title: form_data.title,
             text: form_data.text,
         };
-        let updated_model = self.repository.update_post_by_id(id, post_model).await?;
-        Ok(Post::from(updated_model))
+        self.repository.update_post_by_id(id, post).await.map_err(PostServiceError::from)
     }
 
     pub async fn delete_post(&self, id: i32) -> Result<(), PostServiceError> {
