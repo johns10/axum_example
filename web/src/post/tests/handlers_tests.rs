@@ -9,10 +9,21 @@ use domain::repository::Repository;
 use mockall::predicate::*;
 use std::sync::Arc;
 use tower::util::ServiceExt;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::post::handlers;
 use crate::AppState;
 use domain::post::tests::db_mocks::MockPostRepository;
+
+#[ctor::ctor]
+fn init() {
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::EnvFilter::new(
+            std::env::var("RUST_LOG").unwrap_or_else(|_| "debug".into()),
+        ))
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+}
 
 fn create_app_state(mock_repo: MockPostRepository) -> AppState {
     let repository = Repository {
