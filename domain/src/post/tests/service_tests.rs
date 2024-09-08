@@ -1,3 +1,4 @@
+use chrono::Utc;
 use domain::post::model::PostForm;
 use domain::post::service::PostService;
 use domain::post::tests::db_mocks::MockPostRepository;
@@ -15,6 +16,8 @@ async fn test_find_post_by_id() {
                 id: 1,
                 title: "Test Post".to_string(),
                 text: "This is a test post".to_string(),
+                created_at: Utc::now().naive_utc(),
+                updated_at: Utc::now().naive_utc(),
             }))
         });
 
@@ -40,6 +43,8 @@ async fn test_create_post() {
                 id: 1,
                 title: post.title,
                 text: post.text,
+                created_at: Utc::now().naive_utc(),
+                updated_at: Utc::now().naive_utc(),
             })
         });
 
@@ -75,6 +80,8 @@ async fn test_update_post_by_id() {
                 id: 1,
                 title: post.title,
                 text: post.text,
+                created_at: Utc::now().naive_utc(),
+                updated_at: Utc::now().naive_utc(),
             })
         });
 

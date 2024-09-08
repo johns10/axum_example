@@ -3,6 +3,7 @@ use crate::post::repository::PostRepository;
 use sea_orm::*;
 use std::error::Error;
 use std::fmt;
+use chrono;
 
 #[derive(Debug)]
 pub enum PostServiceError {
@@ -56,10 +57,13 @@ impl<'a> PostService<'a> {
     }
 
     pub async fn create_post(&self, form_data: PostForm) -> Result<Post, PostServiceError> {
+        let now = chrono::Utc::now().naive_utc();
         let post = Post {
             id: 0, // This will be ignored by the repository
             title: form_data.title,
             text: form_data.text,
+            created_at: now,
+            updated_at: now,
         };
         self.repository.create_post(post).await.map_err(PostServiceError::from)
     }
@@ -69,10 +73,13 @@ impl<'a> PostService<'a> {
         id: i32,
         form_data: PostForm,
     ) -> Result<Post, PostServiceError> {
+        let now = chrono::Utc::now().naive_utc();
         let post = Post {
             id,
             title: form_data.title,
             text: form_data.text,
+            created_at: now, // This should ideally be fetched from the existing post
+            updated_at: now,
         };
         self.repository.update_post_by_id(id, post).await.map_err(PostServiceError::from)
     }

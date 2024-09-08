@@ -139,7 +139,7 @@ async fn test_delete_post() {
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/posts/delete/1")
+                .uri("/posts/1/delete")
                 .header("Cookie", "")
                 .body(Body::empty())
                 .unwrap(),

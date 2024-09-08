@@ -1,18 +1,21 @@
 {
   "cSpell.words": [
     "autofocus",
+    "chrono",
     "dotenv",
     "dotenvy",
     "endfor",
     "mockall",
     "myapp",
     "onclick",
+    "oneshot",
     "serde",
     "sqlx",
     "tbody",
     "tera",
     "Tera",
     "thead",
+    "withf",
     "Yoshiera"
   ]
 }

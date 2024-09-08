@@ -14,6 +14,16 @@ impl MigrationTrait for Migration {
                     .col(pk_auto(Posts::Id))
                     .col(string(Posts::Title))
                     .col(string(Posts::Text))
+                    .col(
+                        timestamp(Posts::CreatedAt)
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        timestamp(Posts::UpdatedAt)
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .to_owned(),
             )
             .await
@@ -32,4 +42,6 @@ enum Posts {
     Id,
     Title,
     Text,
+    CreatedAt,
+    UpdatedAt,
 }

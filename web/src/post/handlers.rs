@@ -72,6 +72,7 @@ pub async fn create_post(
     mut cookies: Cookies,
     form: Form<PostForm>,
 ) -> Result<PostResponse, (StatusCode, &'static str)> {
+    println!("In create post");
     let form = form.0;
 
     let post_service = PostService::new(&*state.repository.post);
