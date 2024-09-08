@@ -1,12 +1,22 @@
 use crate::post::model::{Post, PostForm};
 use crate::post::repository::{PostRepository, PostRepositoryError};
 use chrono;
+use std::fmt;
 
 #[derive(Debug)]
 pub enum PostServiceError {
     NotFound,
     DatabaseError(String),
     // Add more error variants as needed
+}
+
+impl fmt::Display for PostServiceError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            PostServiceError::NotFound => write!(f, "Post not found"),
+            PostServiceError::DatabaseError(msg) => write!(f, "Database error: {}", msg),
+        }
+    }
 }
 
 impl From<PostRepositoryError> for PostServiceError {
