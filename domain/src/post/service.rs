@@ -55,7 +55,10 @@ impl<'a> PostService<'a> {
             created_at: now,
             updated_at: now,
         };
-        self.repository.create_post(post).await.map_err(PostServiceError::from)
+        self.repository
+            .create_post(post)
+            .await
+            .map_err(PostServiceError::from)
     }
 
     pub async fn update_post_by_id(
@@ -71,14 +74,23 @@ impl<'a> PostService<'a> {
             created_at: now, // This should ideally be fetched from the existing post
             updated_at: now,
         };
-        self.repository.update_post_by_id(id, post).await.map_err(PostServiceError::from)
+        self.repository
+            .update_post_by_id(id, post)
+            .await
+            .map_err(PostServiceError::from)
     }
 
     pub async fn delete_post(&self, id: i32) -> Result<u64, PostServiceError> {
-        self.repository.delete_post(id).await.map_err(PostServiceError::from)
+        self.repository
+            .delete_post(id)
+            .await
+            .map_err(PostServiceError::from)
     }
 
     pub async fn delete_all_posts(&self) -> Result<u64, PostServiceError> {
-        self.repository.delete_all_posts().await.map_err(PostServiceError::from)
+        self.repository
+            .delete_all_posts()
+            .await
+            .map_err(PostServiceError::from)
     }
 }
