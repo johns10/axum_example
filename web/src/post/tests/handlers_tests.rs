@@ -3,6 +3,7 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
+use chrono::Utc;
 use domain::post::model::Post;
 use domain::post::repository::PostRepository;
 use domain::repository::Repository;
@@ -50,11 +51,15 @@ async fn test_list_posts() {
                         id: 1,
                         title: "Test Post 1".to_string(),
                         text: "Content 1".to_string(),
+                        created_at: Utc::now().naive_utc(),
+                        updated_at: Utc::now().naive_utc(),
                     },
                     Post {
                         id: 2,
                         title: "Test Post 2".to_string(),
                         text: "Content 2".to_string(),
+                        created_at: Utc::now().naive_utc(),
+                        updated_at: Utc::now().naive_utc(),
                     },
                 ],
                 1,
@@ -93,6 +98,8 @@ async fn test_create_post() {
                 id: 1,
                 title: post.title.clone(),
                 text: post.text.clone(),
+                created_at: Utc::now().naive_utc(),
+                updated_at: Utc::now().naive_utc(),
             })
         });
 
