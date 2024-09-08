@@ -1,8 +1,5 @@
 use crate::post::model::{Post, PostForm};
-use crate::post::repository::PostRepository;
-use sea_orm::*;
-use std::error::Error;
-use std::fmt;
+use crate::post::repository::{PostRepository, PostRepositoryError};
 use chrono;
 
 #[derive(Debug)]
@@ -12,20 +9,12 @@ pub enum PostServiceError {
     // Add more error variants as needed
 }
 
-impl fmt::Display for PostServiceError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            PostServiceError::NotFound => write!(f, "Post not found"),
-            PostServiceError::DatabaseError(msg) => write!(f, "Database error: {}", msg),
+impl From<PostRepositoryError> for PostServiceError {
+    fn from(err: PostRepositoryError) -> Self {
+        match err {
+            PostRepositoryError::NotFound => PostServiceError::NotFound,
+            PostRepositoryError::DatabaseError(msg) => PostServiceError::DatabaseError(msg),
         }
-    }
-}
-
-impl Error for PostServiceError {}
-
-impl From<DbErr> for PostServiceError {
-    fn from(err: DbErr) -> Self {
-        PostServiceError::DatabaseError(err.to_string())
     }
 }
 
@@ -41,7 +30,8 @@ impl<'a> PostService<'a> {
     pub async fn find_post_by_id(&self, id: i32) -> Result<Post, PostServiceError> {
         self.repository
             .find_post_by_id(id)
-            .await?
+            .await
+            .map_err(PostServiceError::from)?
             .ok_or(PostServiceError::NotFound)
     }
 
