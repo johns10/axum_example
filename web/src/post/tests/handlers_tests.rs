@@ -110,7 +110,7 @@ async fn test_create_post() {
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/posts/new")
+                .uri("/posts")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("Cookie", "")
                 .body(Body::from("title=New+Post&text=New+Content"))
@@ -139,7 +139,7 @@ async fn test_delete_post() {
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/posts/1/delete")
+                .uri("/posts/delete/1")
                 .header("Cookie", "")
                 .body(Body::empty())
                 .unwrap(),
