@@ -113,37 +113,33 @@ async fn test_create_post() {
         .unwrap();
 
     assert_eq!(response.status(), StatusCode::SEE_OTHER);
-    assert_eq!(response.headers().get("Location").unwrap(), "/");
+    assert_eq!(response.headers().get("Location").unwrap(), "/posts");
 }
 
-// #[tokio::test]
-// async fn test_delete_post() {
-//     let mut mock_repo = MockPostRepository::new();
-//     mock_repo
-//         .expect_delete_post()
-//         .with(eq(1))
-//         .times(1)
-//         .returning(|_| Ok(1));
+#[tokio::test]
+async fn test_delete_post() {
+    let mut mock_repo = MockPostRepository::new();
+    mock_repo
+        .expect_delete_post()
+        .with(eq(1))
+        .times(1)
+        .returning(|_| Ok(1));
 
-//     let app_state = create_app_state(mock_repo);
-//     let app = create_router(app_state);
+    let app_state = create_app_state(mock_repo);
+    let app = create_router(app_state);
 
-//     let app = axum::Router::new()
-//         .route("/posts/:id", axum::routing::delete(handlers::delete_post))
-//         .with_state(app_state);
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("DELETE")
+                .uri("/posts/1")
+                .header("Cookie", "")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
 
-//     let response = app
-//         .oneshot(
-//             Request::builder()
-//                 .method("DELETE")
-//                 .uri("/posts/1")
-//                 .header("Cookie", "")
-//                 .body(Body::empty())
-//                 .unwrap(),
-//         )
-//         .await
-//         .unwrap();
-
-//     assert_eq!(response.status(), StatusCode::SEE_OTHER);
-//     assert_eq!(response.headers().get("Location").unwrap(), "/");
-// }
+    assert_eq!(response.status(), StatusCode::SEE_OTHER);
+    assert_eq!(response.headers().get("Location").unwrap(), "/");
+}

@@ -3,7 +3,7 @@ use axum::{
     http::StatusCode,
     response::Html,
 };
-use domain::post::model::{PostForm, Post};
+use domain::post::model::{Post, PostForm};
 use domain::post::service::PostService;
 use serde::{Deserialize, Serialize};
 use tower_cookies::Cookies;
@@ -34,7 +34,8 @@ pub async fn list_posts(
     let posts_per_page = params.posts_per_page.unwrap_or(5);
 
     let post_service = PostService::new(&*state.repository.post);
-    let (posts, num_pages) = post_service.find_posts_in_page(page, posts_per_page)
+    let (posts, num_pages) = post_service
+        .find_posts_in_page(page, posts_per_page)
         .await
         .expect("Cannot find posts in page");
 
@@ -74,7 +75,8 @@ pub async fn create_post(
     let form = form.0;
 
     let post_service = PostService::new(&*state.repository.post);
-    post_service.create_post(form)
+    post_service
+        .create_post(form)
         .await
         .expect("could not insert post");
 
@@ -91,7 +93,8 @@ pub async fn edit_post(
     Path(id): Path<i32>,
 ) -> Result<Html<String>, (StatusCode, String)> {
     let post_service = PostService::new(&*state.repository.post);
-    let post: Post = post_service.find_post_by_id(id)
+    let post: Post = post_service
+        .find_post_by_id(id)
         .await
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
@@ -115,7 +118,8 @@ pub async fn update_post(
     let form = form.0;
 
     let post_service = PostService::new(&*state.repository.post);
-    post_service.update_post_by_id(id, form)
+    post_service
+        .update_post_by_id(id, form)
         .await
         .expect("could not edit post");
 
@@ -133,7 +137,8 @@ pub async fn delete_post(
     mut cookies: Cookies,
 ) -> Result<PostResponse, (StatusCode, &'static str)> {
     let post_service = PostService::new(&*state.repository.post);
-    post_service.delete_post(id)
+    post_service
+        .delete_post(id)
         .await
         .expect("could not delete post");
 
