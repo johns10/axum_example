@@ -131,8 +131,8 @@ async fn test_delete_post() {
     let response = app
         .oneshot(
             Request::builder()
-                .method("DELETE")
-                .uri("/posts/1")
+                .method("POST")
+                .uri("/posts/1/delete")
                 .header("Cookie", "")
                 .body(Body::empty())
                 .unwrap(),
@@ -141,5 +141,5 @@ async fn test_delete_post() {
         .unwrap();
 
     assert_eq!(response.status(), StatusCode::SEE_OTHER);
-    assert_eq!(response.headers().get("Location").unwrap(), "/");
+    assert_eq!(response.headers().get("Location").unwrap(), "/posts");
 }

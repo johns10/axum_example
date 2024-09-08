@@ -135,17 +135,16 @@ pub async fn delete_post(
     state: State<AppState>,
     Path(id): Path<i32>,
     mut cookies: Cookies,
-) -> Result<PostResponse, (StatusCode, &'static str)> {
+) -> Result<PostResponse, (StatusCode, String)> {
     let post_service = PostService::new(&*state.repository.post);
-    post_service
-        .delete_post(id)
-        .await
-        .expect("could not delete post");
-
-    let data = FlashData {
-        kind: "success".to_owned(),
-        message: "Post successfully deleted".to_owned(),
-    };
-
-    Ok(post_response(&mut cookies, data))
+    match post_service.delete_post(id).await {
+        Ok(_) => {
+            let data = FlashData {
+                kind: "success".to_owned(),
+                message: "Post successfully deleted".to_owned(),
+            };
+            Ok(post_response(&mut cookies, data))
+        }
+        Err(e) => Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
+    }
 }
