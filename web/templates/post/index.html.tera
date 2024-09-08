@@ -20,7 +20,7 @@
         <td>{{ post.title }}</td>
         <td>{{ post.text | truncate(length=50) }}</td>
         <td>
-          <a href="/posts/{{ post.id }}">Edit</a> |
+          <a href="/posts/{{ post.id }}/edit">Edit</a> |
           <form style="display:inline;" action="/posts/{{ post.id }}/delete" method="post">
             <input type="submit" value="Delete" onclick="return confirm('Are you sure?');">
           </form>
