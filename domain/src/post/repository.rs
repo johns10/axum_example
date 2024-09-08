@@ -3,26 +3,16 @@ use ::entity::posts;
 use async_trait::async_trait;
 use chrono::Utc;
 use sea_orm::*;
-use std::fmt;
-use std::error::Error;
+use thiserror::Error;
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum PostRepositoryError {
+    #[error("Post not found")]
     NotFound,
+    #[error("Database error: {0}")]
     DatabaseError(String),
     // Add more error variants as needed
 }
-
-impl fmt::Display for PostRepositoryError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            PostRepositoryError::NotFound => write!(f, "Post not found"),
-            PostRepositoryError::DatabaseError(msg) => write!(f, "Database error: {}", msg),
-        }
-    }
-}
-
-impl Error for PostRepositoryError {}
 
 impl From<DbErr> for PostRepositoryError {
     fn from(err: DbErr) -> Self {
